@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" href="./style.css" />
+      <script src="./app.js"></script>
+   </head>
+   <body>
+      <h1>Conway's Game of Life</h1>
+      <h2>Click on the game to create live cells</h2>
+      <div class="square-container">
+         <canvas id="world" width="1000px" height="1000px"></canvas>
+      </div>
+      <button onclick="timer.start()">start</button>
+      <button onclick="stopGame()">reset</button>
+      <div class="grid-change">
+         Grid Size:
+         <input type="number" name="gridsize" min="1" value="20" max="200"></input>
+         <button onclick="setGridSize(world)">change grid size</button>
+      </div>
+      <div>Time elapsed: <span id="timer">0</span> ms</div>
+      <div>Generation: <span id="generation">0</span></div>
+   </body>
+</html>

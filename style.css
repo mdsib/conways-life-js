@@ -1,0 +1,55 @@
+* {
+   margin:0;
+   padding:0;
+}
+
+html {
+   background:#77A0A9;
+}
+
+body {
+   width:70%;
+   min-width:320px;
+   max-width:610px;
+   margin:1em auto;
+   color:white;
+}
+
+h1, h2 {
+   color:white;
+   opacity:0.7;
+}
+
+h2 {
+   font-size:80%;
+   font-weight:normal;
+}
+
+canvas#world {
+   max-width:500px;
+   width:100%;
+   display:block;
+   cursor:pointer;
+   margin:1em 0;
+}
+
+button {
+   text-transform:uppercase;
+   border:none;
+   color:white;
+   background:blue;
+   opacity:0.5;
+   padding:0.25em 0.5em;
+}
+
+button:hover {
+   opacity:0.7;
+}
+
+div.grid-change {
+   padding:1em 0;
+}
+
+input[type=number] {
+   padding:0.2em;
+}
