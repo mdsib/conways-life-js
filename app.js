@@ -69,7 +69,7 @@ var World = function(canvas) {
    // survives or dies. Adds any dead cells found to deadCellEncounters to later
    // check for reproduction conditions
    this.checkForLife = function(x, y) {
-      //x and y come from keys, so we need to convert them to numbers;
+      //x and y come from keys, so we need to convert them to numbers
       x = +x;
       y = +y;
 
@@ -84,19 +84,13 @@ var World = function(canvas) {
                liveCount++;
             }
             else {
-               self.deadCellEncounters[i] = self.deadCellEncounters[i] || {};
-               if (typeof(self.deadCellEncounters[i][j]) === "undefined") {
-                  self.deadCellEncounters[i][j] = 1;
-               }
-               else {
-                  self.deadCellEncounters[i][j]++;
-               }
+               //increment deadCellEncounters at <i,j>
+               this.setCell(i, j, true, this.deadCellEncounters, true);
             }
          }
       }
       if (liveCount === 2 || liveCount === 3) {
-         self.nextGeneration[x] = self.nextGeneration[x] || {};
-         self.nextGeneration[x][y] = true;
+         this.setCell(x, y, true, this.nextGeneration);
       }
       return liveCount;
    }
@@ -106,8 +100,7 @@ var World = function(canvas) {
       for (var x in self.deadCellEncounters) {
          for (var y in self.deadCellEncounters[x]) {
             if (self.deadCellEncounters[x][y] === 3) {
-               self.nextGeneration[x] = self.nextGeneration[x] || {};
-               self.nextGeneration[x][y] = true;
+               this.setCell(x, y, true, this.nextGeneration);
             }
          }
       }
@@ -143,27 +136,37 @@ var World = function(canvas) {
       self.liveCells = self.nextGeneration;
    }
 
-   this.setCell = function(x, y, isLive) {
+   this.setCell = function(x, y, isLive, cellTracker, increment) {
       console.assert(x <= self.numCols && y <= self.numRows, "invalid placement");
 
       if (isLive === undefined) isLive = true;
+      if (cellTracker === undefined) cellTracker = this.liveCells;
 
-      this.liveCells[x] = this.liveCells[x] || {};
+      cellTracker[x] = cellTracker[x] || {};
 
       if (isLive === "toggle") {
-         if (this.liveCells[x][y]) {
+         if (cellTracker[x][y]) {
             isLive = false;
          }
          else isLive = true;
       }
 
-      if (isLive) {
-         this.liveCells[x][y] = true;
+      if (increment) {
+         if (cellTracker[x][y] === undefined) {
+            cellTracker[x][y] = 1;
+         }
+         else {
+            cellTracker[x][y]++;
+         }
+      }
+
+      else if (isLive) {
+         cellTracker[x][y] = true;
          drawCell(x,y)
       }
 
       else {
-         delete this.liveCells[x][y];
+         delete cellTracker[x][y];
          clearCell(x,y)
       }
 
@@ -172,6 +175,7 @@ var World = function(canvas) {
    return this;
 }
 
+
 /* Timer: manages generation count and time elapsed */
 var Timer = function(incrementFunction, msIncrement, timerElement, generationElement) {
 
@@ -179,6 +183,7 @@ var Timer = function(incrementFunction, msIncrement, timerElement, generationEle
    var interval;
    var start;
    var currentTime;
+   var stepTime;
 
    //runs timer constantly, updates generation every second.
    this.start = function() {
@@ -187,8 +192,10 @@ var Timer = function(incrementFunction, msIncrement, timerElement, generationEle
          currentTime = new Date().getTime() - start;
          timerElement.innerHTML = currentTime;
    
-         if (currentTime / 1000 > generation) {
+         if (currentTime / 100 > generation) {
+            stepTime = new Date().getTime();
             incrementFunction();
+            console.log("generation " + generation + " took " + (new Date().getTime() - stepTime) + " ms");
             generationElement.innerHTML = ++generation;
          }
 
